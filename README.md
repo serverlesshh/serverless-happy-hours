@@ -1,1 +1,1 @@
-![Serverless HH Banner](/Banner SHH.png "ServeressHH Banner")
+![Serverless HH Banner](https://github.com/serverlesshh/serverless-happy-hours/blob/main/Banner%20SHH.png)
