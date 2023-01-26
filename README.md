@@ -5,11 +5,8 @@
 ### Aqui você encontra os materiais adicionais de cada episódio:
 
 ```bash
-|---shh
-|   |---ep1
-|       |--ep1.pdf
-|
-|
-
-
+.
+└── ep-1
+    └── ep1.pdf
+    
 ```
