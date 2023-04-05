@@ -1,0 +1,158 @@
+﻿AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+
+Resources:
+  TextractStateMachine:
+    Type: AWS::StepFunctions::StateMachine
+    Properties:
+      DefinitionString:
+        Fn::Sub: |
+          {
+            "Comment": "A description of my state machine",
+            "StartAt": "AnalyzeDocument",
+            "States": {
+              "AnalyzeDocument": {
+                "Type": "Task",
+                "Parameters": {
+                  "Document": {
+                    "S3Object": {
+                      "Bucket": "demo-textract-566574573255",
+                      "Name.$": "States.Format('documents/{}', $.cnhImageName)"
+                    }
+                  },
+                  "FeatureTypes": [
+                    "QUERIES"
+                  ],
+                  "QueriesConfig": {
+                    "Queries": [
+                      {
+                        "Text": "qual o nome?",
+                        "Alias": "Nome"
+                      },
+                      {
+                        "Text": "qual a data de nascimento?",
+                        "Alias": "DataNasc"
+                      },
+                      {
+                        "Text": "qual o cpf?",
+                        "Alias": "CPF"
+                      },
+                      {
+                        "Text": "qual a filiacao?",
+                        "Alias": "Pais"
+                      }
+                    ]
+                  }
+                },
+                "Resource": "arn:aws:states:::aws-sdk:textract:analyzeDocument",
+                "Next": "Check Confidence",
+                "ResultPath": "$.output"
+              },
+              "Check Confidence": {
+                "Type": "Map",
+                "ItemProcessor": {
+                  "ProcessorConfig": {
+                    "Mode": "DISTRIBUTED",
+                    "ExecutionType": "EXPRESS"
+                  },
+                  "StartAt": "Confidence OK?",
+                  "States": {
+                    "Confidence OK?": {
+                      "Type": "Choice",
+                      "Choices": [
+                        {
+                          "And": [
+                            {
+                              "Variable": "$.Block.BlockType",
+                              "StringEquals": "QUERY_RESULT"
+                            },
+                            {
+                              "Variable": "$.Block.Confidence",
+                              "NumericLessThanPath": "$.Limite"
+                            }
+                          ],
+                          "Next": "On fail - Send DLQ"
+                        }
+                      ],
+                      "Default": "Above Limit"
+                    },
+                    "On fail - Send DLQ": {
+                      "Type": "Task",
+                      "Resource": "arn:aws:states:::sqs:sendMessage",
+                      "Parameters": {
+                        "MessageBody.$": "$",
+                        "QueueUrl": "https://sqs.us-east-1.amazonaws.com/566574573255/Demo-sfn-textract-DLQ"
+                      },
+                      "Next": "Fail - Bellow Limit"
+                    },
+                    "Fail - Bellow Limit": {
+                      "Type": "Fail",
+                      "Error": "bellow_limit",
+                      "Cause": "Field confidence level low"
+                    },
+                    "Above Limit": {
+                      "Type": "Pass",
+                      "End": true,
+                      "ResultPath": "$"
+                    }
+                  }
+                },
+                "Next": "Pass Next Step",
+                "ResultPath": "$",
+                "ItemsPath": "$.output.Blocks",
+                "ItemSelector": {
+                  "Block.$": "$$.Map.Item.Value",
+                  "Limite.$": "$.limite"
+                },
+                "Label": "CheckConfidence",
+                "MaxConcurrency": 1000,
+                "ToleratedFailurePercentage": 10
+              },
+              "Pass Next Step": {
+                "Type": "Pass",
+                "End": true
+              }
+            }
+          }
+      RoleArn: !GetAtt TextractRole.Arn
+
+
+  TextractRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: states.amazonaws.com
+          Action: sts:AssumeRole
+      Path: "/"
+      Policies:
+        - PolicyName: TextractPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "s3:GetObject"
+                  - "s3:PutObject"
+                  - "textract:DetectDocumentText"
+                  - "sqs:SendMessage"
+                  - "textract:AnalyzeDocument"
+                  - "states:StartExecution"
+                Resource: "*"
+
+  TextractOutputBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    Properties:
+      BucketName: !Sub demo-sfn-textract-${AWS::AccountId}
+
+  SQS:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: Demo-sfn-textract-DLQ
+
+  
