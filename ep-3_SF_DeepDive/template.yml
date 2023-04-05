@@ -17,11 +17,11 @@ Resources:
                 "Parameters": {
                   "Document": {
                     "S3Object": {
-                      "Bucket": "demo-textract-566574573255",
+                      "Bucket": "demo-sfn-textract-${AWS::AccountId}",
                       "Name.$": "States.Format('documents/{}', $.cnhImageName)"
                     }
                   },
-                  "FeatureTypes": [
+                  "FeatureTypes": [s
                     "QUERIES"
                   ],
                   "QueriesConfig": {
