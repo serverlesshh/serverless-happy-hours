@@ -8,7 +8,7 @@
 
 ### Workshops
 
-[Serverlesspresso Workshop]([https://www.uol.com.br](https://catalog.us-east-1.prod.workshops.aws/workshops/28e7066a-b0bb-42ad-a0e9-8e8eeeb51133/en-US))
+[Serverlesspresso Workshop](https://catalog.us-east-1.prod.workshops.aws/workshops/28e7066a-b0bb-42ad-a0e9-8e8eeeb51133/en-US)
 
 [The AWS Step Functions Workshop](https://catalog.workshops.aws/stepfunctions/en-US)
 
