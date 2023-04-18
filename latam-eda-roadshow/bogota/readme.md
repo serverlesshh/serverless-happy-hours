@@ -8,11 +8,13 @@
 
 ### Workshops
 
-[Serverlesspresso Workshop](https://www.uol.com.br)
+[Serverlesspresso Workshop]([https://www.uol.com.br](https://catalog.us-east-1.prod.workshops.aws/workshops/28e7066a-b0bb-42ad-a0e9-8e8eeeb51133/en-US))
 
-[The AWS Step Functions Workshop](https://www.uol.com.br)
+[The AWS Step Functions Workshop](https://catalog.workshops.aws/stepfunctions/en-US)
 
-[Serverless Patterns Workshops](https://www.uol.com.br)
+[Serverless Patterns Workshops](https://catalog.workshops.aws/serverless-patterns/en-US)
+
+[The Amazon API Gateway Workshop](https://catalog.workshops.aws/apigateway)
 
 ### Sessions
 
@@ -30,9 +32,13 @@
 
 [AWS re:Invent 2022 - Get started building your first serverless, event-driven application](https://www.youtube.com/watch?v=-WYBOuP1Y6E)
 
-[Are you integrating or building distributed applications?](https://youtu.be/Zrj7RD7G24Q)
+[AWS re:Invent 2022 - Are you integrating or building distributed applications?](https://youtu.be/Zrj7RD7G24Q)
 
-[Advanced Serverless workflow patterns and best practices](https://youtu.be/o6-7BAUWaqg)
+[AWS re:Invent 2022 - Advanced serverless workflow patterns and best practices](https://youtu.be/o6-7BAUWaqg)
+
+[AWS re:Invent 2022 - [NEW] Accelerate workloads using parallelism w/Step Functions & Lambda](https://www.youtube.com/watch?v=SG6_oy72hh4)
+
+[AWS re:Invent 2022 - Application integration patterns for microservices](https://www.youtube.com/watch?v=GoBOivyE7PY)
 
 
 
